@@ -2,7 +2,6 @@ package renderer;
 
 import org.joml.*;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.system.CallbackI;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -11,7 +10,6 @@ import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 
 public class Shader {
 
