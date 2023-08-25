@@ -1,6 +1,5 @@
 package jade;
 
-import util.Time;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -27,9 +26,9 @@ public class Window {
         this.height = 1080;
         this.title = "Mario";
 
-        r = 1;
-        g = 1;
-        b = 1;
+        r = 0;
+        g = 0;
+        b = 0;
         a = 1;
     }
 
@@ -121,26 +120,26 @@ public class Window {
 
     public void loop() {
 
-        float beginnTime = Time.getTime();
-        float endTime = Time.getTime();
-        float dt = -1.0f;
+        float lastFrameTime = -1f;
 
         while (!glfwWindowShouldClose(glfwWindow)) {
+
+            float time = (float)glfwGetTime();
+            float dt = lastFrameTime - time;
+            if (lastFrameTime == -1) {
+                System.out.println("first Iteration time");
+                dt = 1f / 60f;
+            }
+            lastFrameTime = time;
 
             glfwPollEvents();
 
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            if (dt >= 0) {
-                currentScene.update(dt);
-            }
+            currentScene.update(dt);
 
             glfwSwapBuffers(glfwWindow);
-
-            endTime = Time.getTime();
-            dt = endTime - beginnTime;
-            beginnTime = endTime;
         }
     }
 }
