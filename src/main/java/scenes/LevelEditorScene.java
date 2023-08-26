@@ -8,6 +8,8 @@ import jade.GameObject;
 import jade.Prefabs;
 import jade.Transform;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
+import renderer.DebugDraw;
 import util.AssetPool;
 import util.Assets;
 
@@ -17,12 +19,15 @@ public class LevelEditorScene extends Scene {
 
     SpriteSheet sprites;
 
-    MouseControls mouseControls = new MouseControls();
+    GameObject levelEditorStuff = new GameObject("levelEditor", new Transform(new Vector2f()), 0);
 
     public LevelEditorScene() { }
 
     @Override
     public void init() {
+        levelEditorStuff.addComponent(new MouseControls());
+        levelEditorStuff.addComponent(new GridLines());
+
         loadResources();
         this.camera = new Camera(new Vector2f(-250, 0));
         sprites = AssetPool.getSpriteSheet(Assets.blocksSheet);
@@ -44,7 +49,7 @@ public class LevelEditorScene extends Scene {
     @Override
     public void update(float dt) {
 
-        mouseControls.update(dt);
+        levelEditorStuff.update(dt);
 
         for (GameObject go : this.gameObjects) {
             go.update(dt);
@@ -68,16 +73,16 @@ public class LevelEditorScene extends Scene {
 
         for (int i = 0; i < sprites.getSize(); i++) {
             Sprite sprite = sprites.getSprite(i);
-            float spriteWidth = sprite.getWidth();
-            float spriteHeight = sprite.getHeight();
+            float spriteWidth = sprite.getWidth() * 4;
+            float spriteHeight = sprite.getHeight() * 4;
             int id = sprite.getTexId();
             Vector2f[] texCoords = sprite.getTexCoords();
 
             ImGui.pushID(i);
-            if (ImGui.imageButton(id, spriteWidth, spriteHeight, texCoords[0].x, texCoords[0].y, texCoords[2].x, texCoords[2].y)) {
-                GameObject object = Prefabs.generateSpriteObject(sprite, spriteWidth, spriteHeight);
+            if (ImGui.imageButton(id, spriteWidth, spriteHeight, texCoords[2].x, texCoords[0].y, texCoords[0].x, texCoords[2].y)) {
+                GameObject object = Prefabs.generateSpriteObject(sprite, 32, 32);
                 //Attach this to mouse Cursor
-                mouseControls.pickupObject(object);
+                levelEditorStuff.getComponent(MouseControls.class).pickupObject(object);
             }
             ImGui.popID();
 
