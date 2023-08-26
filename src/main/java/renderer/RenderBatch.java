@@ -13,10 +13,9 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL30.*;
 
-public class RenderBatch {
+public class RenderBatch implements Comparable<RenderBatch> {
 
     //Vertex
     // =======================
@@ -47,7 +46,10 @@ public class RenderBatch {
     private int maxBatchSize;
     private Shader shader;
 
-    public RenderBatch(int maxBatchSize) {
+    private int zIndex;
+
+    public RenderBatch(int maxBatchSize, int zIndex) {
+        this.zIndex = zIndex;
         shader = AssetPool.getShader(Assets.defaultShader);
         this.maxBatchSize = maxBatchSize;
         this.sprites = new SpriteRenderer[maxBatchSize];
@@ -57,6 +59,11 @@ public class RenderBatch {
         this.numSprites = 0;
         this.hasRoom = true;
         this.textures = new ArrayList<>();
+    }
+
+    @Override
+    public int compareTo(RenderBatch o) {
+        return Integer.compare(this.zIndex, o.zIndex);
     }
 
     public void addSprite(SpriteRenderer spr) {
@@ -165,10 +172,21 @@ public class RenderBatch {
     }
 
     public void render() {
-        //For now we will re-buffer all data every frame
-        //upload buffer
-        glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
+        boolean reBufferData = false;
+
+        for (int i = 0; i < numSprites; i++) {
+            SpriteRenderer spr = sprites[i];
+            if (spr.isDirty()) {
+                loadVertexProperties(i);
+                spr.setClean();
+                reBufferData = true;
+            }
+        }
+
+        if (reBufferData) {
+            glBindBuffer(GL_ARRAY_BUFFER, vboID);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
+        }
 
         //Use shader
         shader.use();
@@ -236,5 +254,9 @@ public class RenderBatch {
 
     public boolean hasTexture(Texture tex) {
         return textures.contains(tex);
+    }
+
+    public int getzIndex() {
+        return zIndex;
     }
 }
