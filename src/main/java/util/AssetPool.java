@@ -33,7 +33,8 @@ public class AssetPool {
             return AssetPool.textures.get(file.getAbsolutePath());
         } else {
             System.out.println("Texture not found, loading asset ... ");
-            Texture texture = new Texture(resourceName);
+            Texture texture = new Texture();
+            texture.init(resourceName);
             AssetPool.textures.put(file.getAbsolutePath(), texture);
             return texture;
         }
