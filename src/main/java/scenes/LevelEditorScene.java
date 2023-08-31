@@ -46,6 +46,15 @@ public class LevelEditorScene extends Scene {
         AssetPool.getTexture(Assets.testImage1);
         AssetPool.addSpriteSheet(Assets.spriteSheet,
                 new SpriteSheet(AssetPool.getTexture(Assets.spriteSheet), 16,16,26,0));
+
+        for (GameObject g : gameObjects) {
+            if (g.getComponent(SpriteRenderer.class) != null) {
+                SpriteRenderer spr = g.getComponent(SpriteRenderer.class);
+                if (spr.getTexture() != null) {
+                    spr.setTexture(AssetPool.getTexture(spr.getTexture().getFilepath()));
+                }
+            }
+        }
     }
 
     @Override
