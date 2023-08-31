@@ -18,6 +18,24 @@ public class Texture {
 //
 //    }
 
+
+    public Texture() {
+        this.texID = -1;
+        this.width = -1;
+        this.height = -1;
+    }
+
+    public Texture(int width, int height) {
+        this.filepath = "generated";
+
+        //Generate the Texture on GPU
+        texID = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texID);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
+                0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    }
+
     public void init(String filepath) {
         this.filepath = filepath;
 
@@ -82,5 +100,18 @@ public class Texture {
 
     public int getTexID() {
         return texID;
+    }
+
+    public String getFilepath() {
+        return filepath;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) return false;
+        if (!(o instanceof Texture)) return false;
+        Texture oTex = (Texture) o;
+        return oTex.getWidth() == this.width && oTex.getHeight() == this.height && oTex.getTexID() == this.texID &&
+                oTex.getFilepath().equals(this.filepath);
     }
 }

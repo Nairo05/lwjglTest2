@@ -33,7 +33,9 @@ public class LevelEditorScene extends Scene {
         sprites = AssetPool.getSpriteSheet(Assets.blocksSheet);
 
         if (loadedLevel) {
-            this.activeGameObject = gameObjects.get(0);
+            if (!gameObjects.isEmpty()) {
+                this.activeGameObject = gameObjects.get(0);
+            }
             return;
         }
     }
